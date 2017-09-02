@@ -1,4 +1,5 @@
-package main
+// base91: a cli utility for base91 encode/decode. Run with --help for details.
+package main // import "ekyu.moe/base91/cmd/base91"
 
 import (
 	"flag"
