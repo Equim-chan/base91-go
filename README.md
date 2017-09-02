@@ -38,13 +38,15 @@ $ go test -bench . -benchmem ekyu.moe/base91
 goos: windows
 goarch: amd64
 pkg: ekyu.moe/base91
-BenchmarkDecode-4             20          65212520 ns/op         7157760 B/op         36 allocs/op
-BenchmarkDecoder-4            20          88480005 ns/op         8000756 B/op         38 allocs/op
-BenchmarkEncode-4            200           7172590 ns/op         8673288 B/op         37 allocs/op
-BenchmarkEncoder-4           200           8590670 ns/op         2324512 B/op         24 allocs/op
+BenchmarkDecode-4             20          77053375 ns/op         7157760 B/op         36 allocs/op
+BenchmarkDecoder-4            10         146889760 ns/op         6332510 B/op        916 allocs/op
+BenchmarkEncode-4            200           6279833 ns/op         8673280 B/op         37 allocs/op
+BenchmarkEncoder-4           200           6278146 ns/op         2324512 B/op         24 allocs/op
 PASS
-ok      ekyu.moe/base91 8.572s
+ok      ekyu.moe/base91 7.598s
 ```
+
+(In other words, approximately 159.28 MB/s for encoder and 6.81 MB/s for decoder)
 
 ## License
 [BSD-3.0](https://github.com/Equim-chan/base91-go/blob/master/LICENSE)
