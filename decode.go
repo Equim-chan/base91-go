@@ -2,8 +2,6 @@ package base91
 
 import (
 	"io"
-
-	"ekyu.moe/util/number"
 )
 
 func decode(src []byte) []byte {
@@ -61,7 +59,12 @@ func DecodeString(s string) []byte {
 type decoder struct {
 	// input
 	reader io.Reader
-	buf    []byte
+
+	outBuf []byte
+	inBuf  *[32 * 1024]byte
+	nInBuf int
+
+	err error
 
 	b, n uint32
 	v    int
@@ -72,69 +75,71 @@ type decoder struct {
 func NewDecoder(r io.Reader) io.Reader {
 	return &decoder{
 		reader: r,
-		buf:    []byte{},
+		outBuf: []byte{},
+		inBuf:  new([32 * 1024]byte),
+		nInBuf: 0,
+		err:    nil,
 		b:      0,
 		n:      0,
 		v:      -1,
 	}
 }
 
-func (d *decoder) read(c []byte) (int, error) {
-	// 只是个估计，base91 的转码率是不固定的
-	encodedLenEst := int(number.Round(1.23078*float64(len(c))+0.36812, 0))
-	encodedBuf := make([]byte, encodedLenEst)
-
-	upstreamReadLen, err := d.reader.Read(encodedBuf)
-	if err != nil {
-		return 0, err
-	}
-
-	for i := 0; i < upstreamReadLen; i++ {
-		p, ok := dectab[encodedBuf[i]]
-		if !ok {
-			continue
-		}
-		if d.v < 0 {
-			d.v = int(p)
-			continue
-		}
-		d.v += int(p) * 91
-		d.b |= uint32(d.v) << d.n
-		if d.v&0x1fff > 88 {
-			d.n += 13
-		} else {
-			d.n += 14
-		}
-		for {
-			d.buf = append(d.buf, uint8(d.b))
-			d.b >>= 8
-			d.n -= 8
-			if d.n <= 7 {
-				break
-			}
-		}
-		d.v = -1
-	}
-
-	if d.v > -1 {
-		d.buf = append(d.buf, uint8(d.b|uint32(d.v)<<d.n))
-	}
-
-	// 长度估计错误，递归读剩下的部分
-	n := copy(c, d.buf)
-	if n < len(c) {
-		m, err := d.read(c[n:])
-		return m + n, err
-	}
-
-	return n, nil
-}
-
 func (d *decoder) Read(c []byte) (int, error) {
-	// flush buffer if there is any
-	n := copy(c, d.buf)
-	d.buf = d.buf[:0]
+	if len(c) == 0 {
+		return 0, nil
+	}
+	if d.err != nil {
+		return 0, d.err
+	}
 
-	m, err := d.read(c[n:])
-	return m + n, err
+	n := 0
+	for n < len(c) && d.err == nil {
+		var upn int
+		upn, d.err = d.reader.Read(d.inBuf[d.nInBuf:])
+
+		next := d.nInBuf + upn
+		for ; d.nInBuf < next; d.nInBuf++ {
+			p, ok := dectab[d.inBuf[d.nInBuf]]
+			if !ok {
+				continue
+			}
+			if d.v < 0 {
+				d.v = int(p)
+				continue
+			}
+			d.v += int(p) * 91
+			d.b |= uint32(d.v) << d.n
+			if d.v&0x1fff > 88 {
+				d.n += 13
+			} else {
+				d.n += 14
+			}
+			for {
+				d.outBuf = append(d.outBuf, uint8(d.b))
+				d.b >>= 8
+				d.n -= 8
+				if d.n <= 7 {
+					break
+				}
+			}
+			d.v = -1
+		}
+
+		if d.nInBuf == 32*1024 {
+			d.nInBuf = 0
+		}
+
+		if d.err != nil && d.v > -1 {
+			// EOF is met, flush
+			d.outBuf = append(d.outBuf, uint8(d.b|uint32(d.v)<<d.n))
+		}
+
+		m := copy(c[n:], d.outBuf)
+		d.outBuf = d.outBuf[m:]
+		n += m
+		// if m < len(c), then outBuf did not suffuse c
+	}
+
+	return n, d.err
 }
