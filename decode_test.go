@@ -21,7 +21,7 @@ var (
 func TestDecode(t *testing.T) {
 	for k, v := range decodeSpec {
 		if actual := string(DecodeString(k)); actual != v {
-			t.Errorf("expected `%s`, got `%s`", v, actual)
+			t.Fatalf("expected `%s`, got `%s`", v, actual)
 		}
 	}
 }
@@ -31,10 +31,10 @@ func TestDecoder(t *testing.T) {
 		d := NewDecoder(bytes.NewReader([]byte(k)))
 		actual, err := ioutil.ReadAll(d)
 		if err != nil {
-			t.Error(err)
+			t.Fatal(err)
 		}
 		if string(actual) != v {
-			t.Errorf("expected `%s`, got `%s`", v, actual)
+			t.Fatalf("expected `%s`, got `%s`", v, actual)
 		}
 	}
 }

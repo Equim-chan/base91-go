@@ -20,7 +20,7 @@ var (
 func TestEncode(t *testing.T) {
 	for k, v := range encodeSpec {
 		if actual := EncodeToString([]byte(k)); actual != v {
-			t.Errorf("expected `%s`, got `%s`", v, actual)
+			t.Fatalf("expected `%s`, got `%s`", v, actual)
 		}
 	}
 }
@@ -30,13 +30,13 @@ func TestEncoder(t *testing.T) {
 		buf := new(bytes.Buffer)
 		e := NewEncoder(buf)
 		if _, err := e.Write([]byte(k)); err != nil {
-			t.Error(err)
+			t.Fatal(err)
 		}
 		if err := e.Close(); err != nil {
-			t.Error(err)
+			t.Fatal(err)
 		}
-		if actual := buf.Bytes(); string(actual) != v {
-			t.Errorf("expected `%s`, got `%s`", v, actual)
+		if actual := string(buf.Bytes()); actual != v {
+			t.Fatalf("expected `%s`, got `%s`", v, actual)
 		}
 	}
 }
