@@ -8,7 +8,7 @@ import (
 
 func decode(src []byte) []byte {
 	// b and n must be at least uint32
-	var b, n uint = 0, 0
+	var b, n uint32 = 0, 0
 	v := -1
 	decoded := []byte{}
 
@@ -23,7 +23,7 @@ func decode(src []byte) []byte {
 			continue
 		}
 		v += int(p) * 91
-		b |= uint(v) << n
+		b |= uint32(v) << n
 		if v&0x1fff > 88 {
 			n += 13
 		} else {
@@ -41,7 +41,7 @@ func decode(src []byte) []byte {
 	}
 
 	if v > -1 {
-		decoded = append(decoded, uint8(b|uint(v)<<n))
+		decoded = append(decoded, uint8(b|uint32(v)<<n))
 	}
 
 	return decoded
@@ -59,10 +59,11 @@ func DecodeString(s string) []byte {
 }
 
 type decoder struct {
+	// input
 	reader io.Reader
 	buf    []byte
 
-	b, n uint
+	b, n uint32
 	v    int
 }
 
@@ -98,7 +99,7 @@ func (d *decoder) read(c []byte) (int, error) {
 			continue
 		}
 		d.v += int(p) * 91
-		d.b |= uint(d.v) << d.n
+		d.b |= uint32(d.v) << d.n
 		if d.v&0x1fff > 88 {
 			d.n += 13
 		} else {
@@ -116,9 +117,10 @@ func (d *decoder) read(c []byte) (int, error) {
 	}
 
 	if d.v > -1 {
-		d.buf = append(d.buf, uint8(d.b|uint(d.v)<<d.n))
+		d.buf = append(d.buf, uint8(d.b|uint32(d.v)<<d.n))
 	}
 
+	// 长度估计错误，递归读剩下的部分
 	n := copy(c, d.buf)
 	if n < len(c) {
 		m, err := d.read(c[n:])
@@ -132,10 +134,7 @@ func (d *decoder) Read(c []byte) (int, error) {
 	// flush buffer if there is any
 	n := copy(c, d.buf)
 	d.buf = d.buf[:0]
-	if n > 0 {
-		m, err := d.read(c[n:])
-		return m + n, err
-	}
 
-	return d.read(c)
+	m, err := d.read(c[n:])
+	return m + n, err
 }

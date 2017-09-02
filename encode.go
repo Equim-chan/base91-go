@@ -5,11 +5,11 @@ import (
 )
 
 func encode(src []byte) []byte {
-	var b, n uint = 0, 0
+	var b, n uint32 = 0, 0
 	encoded := []byte{}
 
 	for i := 0; i < len(src); i++ {
-		b |= uint(src[i]) << n
+		b |= uint32(src[i]) << n
 		n += 8
 
 		if n <= 13 {
@@ -52,10 +52,11 @@ func EncodeToString(src []byte) string {
 }
 
 type encoder struct {
+	// output
 	writer io.Writer
 	buf    []byte
 
-	b, n uint
+	b, n uint32
 }
 
 // NewEncoder returns a new base91 stream encoder. Data written to the returned
@@ -73,11 +74,11 @@ func NewEncoder(w io.Writer) io.WriteCloser {
 
 func (e *encoder) Write(c []byte) (int, error) {
 	var err error
-	var n int
+	var i int
 	e.buf = e.buf[:0]
 
-	for n = 0; n < len(c); n++ {
-		e.b |= uint(c[n]) << e.n
+	for i = 0; i < len(c); i++ {
+		e.b |= uint32(c[i]) << e.n
 		e.n += 8
 
 		if e.n <= 13 {
@@ -97,11 +98,8 @@ func (e *encoder) Write(c []byte) (int, error) {
 		e.buf = append(e.buf, enctab[v%91], enctab[v/91])
 	}
 
-	if _, err = e.writer.Write(e.buf); err != nil {
-		return n, err
-	}
-
-	return n, err
+	_, err = e.writer.Write(e.buf)
+	return i, err
 }
 
 func (e *encoder) Close() error {
