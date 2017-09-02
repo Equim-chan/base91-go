@@ -23,10 +23,6 @@ Options:
                      is specified, write to stdout in raw. Default "-".
    -w, --wrap=COLS   Wrap encoded lines after COLS character (default 76). Use 0 to
                      disable line wrapping.
-
-Example:
-   ` + title + ` -o imgs.zip.asc dump imgs.zip
-   ` + title + ` -o imgs.zip load imgs.zip.asc
 `
 )
 
