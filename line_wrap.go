@@ -4,9 +4,14 @@ import (
 	"io"
 )
 
+var (
+	EmailLineWrap = 76
+)
+
 type wrapper struct {
 	// output
 	writer io.Writer
+	cols   int
 
 	buf     []byte
 	lastPos int
@@ -18,12 +23,13 @@ type wrapEncoder struct {
 	wrapper *wrapper
 }
 
-// NewLineWrapper returns an base91 encoeder that encode data and insert CRLF every 76
+// NewLineWrapper returns an base91 encoeder that encode data and insert CRLF every cols
 // characters. This is useful for emails.
-func NewLineWrapper(w io.Writer) io.WriteCloser {
+func NewLineWrapper(w io.Writer, cols int) io.WriteCloser {
 	wr := &wrapper{
 		writer:  w,
-		buf:     make([]byte, 78),
+		cols:    cols,
+		buf:     make([]byte, cols+2),
 		lastPos: 0,
 	}
 	we := &wrapEncoder{
@@ -65,7 +71,7 @@ func (wr *wrapper) flush() error {
 func (wr *wrapper) Write(p []byte) (int, error) {
 	var i int
 	for i = 0; i < len(p); i++ {
-		if wr.lastPos == 76 {
+		if wr.lastPos == wr.cols {
 			if err := wr.flush(); err != nil {
 				return i + 1, err
 			}

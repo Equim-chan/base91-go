@@ -14,7 +14,7 @@ var (
 func TestLineWrapper(t *testing.T) {
 	for k, v := range lineWrapperSpec {
 		buf := new(bytes.Buffer)
-		w := NewLineWrapper(buf)
+		w := NewLineWrapper(buf, EmailLineWrap)
 
 		if _, err := w.Write([]byte(k)); err != nil {
 			t.Fatal(err)

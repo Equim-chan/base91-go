@@ -31,6 +31,8 @@ func main() {
 
 Check [godoc](https://godoc.org/ekyu.moe/base91) for further documents.
 
+A CLI utility is also available with `go get ekyu.moe/base91/cmd/base91`.
+
 ## Benchmark
 Note: 1 op = 1 MB input
 ```plain
