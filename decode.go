@@ -11,8 +11,8 @@ func decode(src []byte) []byte {
 	decoded := []byte{}
 
 	for i := 0; i < len(src); i++ {
-		p, ok := dectab[src[i]]
-		if !ok {
+		p := dectab[src[i]]
+		if p > 90 {
 			// skip invalid character silently
 			continue
 		}
@@ -100,8 +100,8 @@ func (d *decoder) Read(c []byte) (int, error) {
 
 		next := d.nInBuf + upn
 		for ; d.nInBuf < next; d.nInBuf++ {
-			p, ok := dectab[d.inBuf[d.nInBuf]]
-			if !ok {
+			p := dectab[d.inBuf[d.nInBuf]]
+			if p > 90 {
 				continue
 			}
 			if d.v < 0 {
