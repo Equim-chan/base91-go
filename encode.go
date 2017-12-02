@@ -40,8 +40,6 @@ func encode(src []byte) []byte {
 }
 
 // Encode encodes src into dst. It returns the number of bytes written to dst.
-// Whereas base91 uses up to nearly all printable characters, Encode skips invalid
-// characters silently.
 func Encode(dst, src []byte) int {
 	return copy(dst, encode(src))
 }

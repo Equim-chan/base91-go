@@ -46,6 +46,8 @@ func decode(src []byte) []byte {
 }
 
 // Decode decodes src into dst. It returns the number of bytes written to dst.
+// Whereas base91 uses up to nearly all printable characters, Decode skips invalid
+// characters silently.
 func Decode(dst, src []byte) int {
 	return copy(dst, decode(src))
 }
