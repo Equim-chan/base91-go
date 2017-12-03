@@ -34,7 +34,7 @@ func main() {
 	flag.BoolVar(&decodeMode, "d", false, "")
 	flag.BoolVar(&decodeMode, "decode", false, "")
 	flag.StringVar(&outFilename, "o", "-", "")
-	flag.StringVar(&outFilename, "ouput", "-", "")
+	flag.StringVar(&outFilename, "output", "-", "")
 	flag.IntVar(&wrap, "w", base91.EmailLineWrap, "")
 	flag.IntVar(&wrap, "wrap", base91.EmailLineWrap, "")
 
