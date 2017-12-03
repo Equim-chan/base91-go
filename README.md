@@ -1,7 +1,8 @@
 # base91-go
 [![Travis](https://img.shields.io/travis/Equim-chan/base91-go.svg)](https://travis-ci.org/Equim-chan/base91-go)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Equim-chan/base91-go)](https://goreportcard.com/report/github.com/Equim-chan/base91-go)
-[![license](https://img.shields.io/badge/BSD-3-blue.svg)](https://github.com/Equim-chan/base91-go/blob/master/LICENSE)
+[![Release](https://img.shields.io/github/release/Equim-chan/base91-go.svg)](https://github.com/Equim-chan/base91-go/releases/latest)
+[![License](https://img.shields.io/badge/BSD-3-blue.svg)](https://github.com/Equim-chan/base91-go/blob/master/LICENSE)
 [![GoDoc](http://img.shields.io/badge/godoc-reference-5272B4.svg)](https://godoc.org/ekyu.moe/base91)
 
 basE91 codec implemented in Golang.
