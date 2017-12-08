@@ -44,7 +44,8 @@ func Encode(dst, src []byte) int {
 	return copy(dst, encode(src))
 }
 
-// EncodeToString returns the encoded base91 string of src, probably what you want.
+// EncodeToString returns the encoded base91 string of src, probably what you
+// want.
 func EncodeToString(src []byte) string {
 	return string(encode(src))
 }

@@ -46,14 +46,14 @@ func decode(src []byte) []byte {
 }
 
 // Decode decodes src into dst. It returns the number of bytes written to dst.
-// Whereas base91 uses up to nearly all printable characters, Decode skips invalid
-// characters silently.
+// Whereas base91 uses up to nearly all printable characters, Decode skips
+// invalid characters silently.
 func Decode(dst, src []byte) int {
 	return copy(dst, decode(src))
 }
 
-// DecodeString returns the bytes represented by the base91 string s, probably what
-// you want.
+// DecodeString returns the bytes represented by the base91 string s, probably
+// what you want.
 func DecodeString(s string) []byte {
 	return decode([]byte(s))
 }
@@ -72,8 +72,8 @@ type decoder struct {
 	v    int
 }
 
-// NewDecoder constructs a new base91 stream decoder. Data read from the returned
-// reader is base91 decoded from r.
+// NewDecoder constructs a new base91 stream decoder. Data read from the
+// returned reader is base91 decoded from r.
 func NewDecoder(r io.Reader) io.Reader {
 	return &decoder{
 		reader: r,

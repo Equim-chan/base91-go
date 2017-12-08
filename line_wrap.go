@@ -23,8 +23,8 @@ type wrapEncoder struct {
 	wrapper *wrapper
 }
 
-// NewLineWrapper returns an base91 encoeder that encode data and insert CRLF every cols
-// characters. This is useful for emails.
+// NewLineWrapper returns an base91 encoeder that encode data and insert CRLF
+// every cols characters. This is useful for emails.
 func NewLineWrapper(w io.Writer, cols int) io.WriteCloser {
 	wr := &wrapper{
 		writer:  w,
