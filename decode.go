@@ -63,7 +63,7 @@ type decoder struct {
 	reader io.Reader
 
 	outBuf []byte
-	inBuf  *[32 * 1024]byte
+	inBuf  *[1024]byte
 	nInBuf int
 
 	err error
@@ -78,7 +78,7 @@ func NewDecoder(r io.Reader) io.Reader {
 	return &decoder{
 		reader: r,
 		outBuf: []byte{},
-		inBuf:  new([32 * 1024]byte),
+		inBuf:  new([1024]byte),
 		nInBuf: 0,
 		err:    nil,
 		b:      0,
@@ -128,7 +128,7 @@ func (d *decoder) Read(c []byte) (int, error) {
 			d.v = -1
 		}
 
-		if d.nInBuf == 32*1024 {
+		if d.nInBuf == 1024 {
 			d.nInBuf = 0
 		}
 

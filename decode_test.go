@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"io"
 	"io/ioutil"
+	"strings"
 	"testing"
 )
 
@@ -40,33 +41,38 @@ func TestDecoder(t *testing.T) {
 }
 
 func BenchmarkDecode(b *testing.B) {
+	s := make([]byte, 1024*1024)
+	if _, err := rand.Read(s); err != nil {
+		b.Fatal(err)
+	}
+
+	encoded := EncodeToString(s)
+
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-
-		s := make([]byte, 1024*1024)
-		if _, err := io.ReadFull(rand.Reader, s); err != nil {
-			b.Fatal(err)
-		}
-		encoded := EncodeToString(s)
-
-		b.StartTimer()
-
 		DecodeString(encoded)
 	}
 }
 
 func BenchmarkDecoder(b *testing.B) {
+	s := make([]byte, 1024*1024)
+	if _, err := rand.Read(s); err != nil {
+		b.Fatal(err)
+	}
+
+	encoded := EncodeToString(s)
+	size := int64(len(encoded))
+
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
+		d := NewDecoder(strings.NewReader(encoded))
 
-		buf := new(bytes.Buffer)
-		buf.Grow(1024 * 1024)
-		d := NewDecoder(rand.Reader)
-
-		b.StartTimer()
-
-		if _, err := io.CopyN(buf, d, 1024*1024); err != nil {
+		if n, err := io.CopyN(ioutil.Discard, d, 1024*1024); err != nil {
+			b.Log(n)
+			b.Log(size)
 			b.Fatal(err)
 		}
+
+		b.SetBytes(size)
 	}
 }

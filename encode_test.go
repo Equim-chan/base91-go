@@ -42,33 +42,29 @@ func TestEncoder(t *testing.T) {
 }
 
 func BenchmarkEncode(b *testing.B) {
+	s := make([]byte, 1024*1024)
+	if _, err := io.ReadFull(rand.Reader, s); err != nil {
+		b.Fatal(err)
+	}
+
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-
-		s := make([]byte, 1024*1024)
-		if _, err := io.ReadFull(rand.Reader, s); err != nil {
-			b.Fatal(err)
-		}
-
-		b.StartTimer()
-
 		EncodeToString(s)
 	}
 }
 
 func BenchmarkEncoder(b *testing.B) {
+	buf := new(bytes.Buffer)
+	buf.Grow(1024 * 1024)
+	e := NewEncoder(buf)
+	defer e.Close()
+
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-
-		buf := new(bytes.Buffer)
-		buf.Grow(1024 * 1024)
-		e := NewEncoder(buf)
-		defer e.Close()
-
-		b.StartTimer()
-
 		if _, err := io.CopyN(e, rand.Reader, 1024*1024); err != nil {
 			b.Fatal(err)
 		}
+
+		b.SetBytes(1024 * 1024)
 	}
 }
