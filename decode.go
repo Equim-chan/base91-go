@@ -61,12 +61,11 @@ func DecodeString(s string) []byte {
 type decoder struct {
 	// input
 	reader io.Reader
+	err    error
 
 	outBuf []byte
 	inBuf  *[1024]byte
 	nInBuf int
-
-	err error
 
 	b, n uint32
 	v    int
@@ -77,13 +76,15 @@ type decoder struct {
 func NewDecoder(r io.Reader) io.Reader {
 	return &decoder{
 		reader: r,
+		err:    nil,
+
 		outBuf: []byte{},
 		inBuf:  new([1024]byte),
 		nInBuf: 0,
-		err:    nil,
-		b:      0,
-		n:      0,
-		v:      -1,
+
+		b: 0,
+		n: 0,
+		v: -1,
 	}
 }
 
@@ -128,7 +129,7 @@ func (d *decoder) Read(c []byte) (int, error) {
 			d.v = -1
 		}
 
-		if d.nInBuf == 1024 {
+		if d.nInBuf >= 1024 {
 			d.nInBuf = 0
 		}
 

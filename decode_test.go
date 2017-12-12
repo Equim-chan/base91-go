@@ -61,18 +61,15 @@ func BenchmarkDecoder(b *testing.B) {
 	}
 
 	encoded := EncodeToString(s)
-	size := int64(len(encoded))
+	b.SetBytes(int64(len(encoded)))
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		d := NewDecoder(strings.NewReader(encoded))
 
-		if n, err := io.CopyN(ioutil.Discard, d, 1024*1024); err != nil {
-			b.Log(n)
-			b.Log(size)
+		if _, err := io.CopyN(ioutil.Discard, d, 1024*1024); err != nil {
 			b.Fatal(err)
 		}
 
-		b.SetBytes(size)
 	}
 }

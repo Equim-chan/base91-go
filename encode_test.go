@@ -56,6 +56,8 @@ func BenchmarkEncode(b *testing.B) {
 func BenchmarkEncoder(b *testing.B) {
 	buf := new(bytes.Buffer)
 	buf.Grow(1024 * 1024)
+	b.SetBytes(1024 * 1024)
+
 	e := NewEncoder(buf)
 	defer e.Close()
 
@@ -65,6 +67,5 @@ func BenchmarkEncoder(b *testing.B) {
 			b.Fatal(err)
 		}
 
-		b.SetBytes(1024 * 1024)
 	}
 }
