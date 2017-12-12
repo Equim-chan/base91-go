@@ -39,19 +39,16 @@ A CLI utility is also available with `go get ekyu.moe/base91/cmd/base91`.
 ## Benchmark
 Note: 1 op = 1 MB input
 ```plain
-$ go test -bench . -benchmem ekyu.moe/base91
+$ go test --bench . --benchmem ekyu.moe/base91
 goos: windows
 goarch: amd64
 pkg: ekyu.moe/base91
-BenchmarkDecode-4            300           4841614 ns/op         7157763 B/op         36 allocs/op
-BenchmarkDecoder-4            50          35287190 ns/op         6324756 B/op        920 allocs/op
-BenchmarkEncode-4            300           5910366 ns/op         8673280 B/op         37 allocs/op
-BenchmarkEncoder-4           200           5865032 ns/op         2324512 B/op         24 allocs/op
+BenchmarkDecode-4            200           6484956 ns/op         7157760 B/op         36 allocs/op
+BenchmarkDecoder-4           200           8789155 ns/op         146.71 MB/s     2136691 B/op      2465 allocs/op
+BenchmarkEncode-4            300           7264316 ns/op         8673280 B/op         37 allocs/op
+BenchmarkEncoder-4           200           7149004 ns/op         146.67 MB/s     2808690 B/op         2 allocs/op
 PASS
-ok      ekyu.moe/base91 10.910s
 ```
-
-(Approximately, 170.50 MB/s of encode speed and 6.81 MB/s of decode speed)
 
 ## License
 [BSD-3-clause](https://github.com/Equim-chan/base91-go/blob/master/LICENSE)
